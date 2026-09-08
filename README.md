@@ -9,7 +9,7 @@ There is no fixed linear path to decide whether a claim should be approved, flag
 Insurance policies contain clauses that depend on one another — for example waiting periods, tiered co‑payment requirements, and pre‑authorization exclusions. Validating one claim cannot be done with a single database lookup; it needs repeated, flexible data retrieval.
 
 
-D0(c) What Good Looks Like
+##D0(c) What Good Looks Like
 A good run of the health-insurance claim first-response agent satisfies the following five criteria:
 1. Correct decision and trigger
    The agent returns exactly one permitted outcome—approve_in_principle, request_document, or escalate—in accordance with the routing table and authoritative fixture records. Where a trigger is required, it must match the actual rule that determined the outcome. Reaching the correct decision through the wrong trigger does not count as a pass.
