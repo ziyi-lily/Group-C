@@ -174,8 +174,8 @@ The D3 implementation and evidence are contained in:
 - `project_files/guardrails.py` — deterministic guardrail implementation;
 - `project_files/guardrail_cases.py` — guardrail test cases;
 - `project_files/run_guardrails.py` — scripted checklist runner;
-- `project_files/results/guardrail_checklist_v1.json` — V1 results;
-- `project_files/results/guardrail_checklist_v2.json` — V2 results.
+- `results/guardrail_checklist_v1.json` — V1 guardrail checklist results;
+- `results/guardrail_checklist_v2.json` — V2 guardrail checklist results.
 
 The checklist can be reproduced from the `project_files` directory with:
 
