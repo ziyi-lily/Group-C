@@ -3,6 +3,7 @@
 PE6201 · A2 — ENTRY POINT
 =====================================================================
     python run_eval.py                 the whole evaluation set, graded
+    python run_eval.py --all           explicit alias for the whole set
     python run_eval.py CLM-8842        one case, every turn shown
     python run_eval.py --prompt        what the model is told, and its size
     python run_eval.py --prompt-diff   v1 against v2, sizes side by side
@@ -18,13 +19,7 @@ my laptop" has caught out every cohort.
 =====================================================================
 """
 import json
-import os
 import sys
-
-PE6201_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-SHARED_RUNTIME = os.path.join(PE6201_ROOT, "shared_runtime")
-if SHARED_RUNTIME not in sys.path:
-    sys.path.insert(0, SHARED_RUNTIME)
 
 import config
 from harness import (load_cases, load_key, report, run_set, is_negative)
@@ -136,6 +131,9 @@ def main(argv):
         return _one_case(args[0])
 
     # ---- the whole set -----------------------------------------------
+    # Default and --all intentionally mean the same thing. A clean-clone
+    # marker run must exercise the complete labelled evaluation set rather
+    # than only the small hand-written SCRIPTS subset.
     key = load_key()
     cases = [c for c in load_cases() if c in key]
     n_neg = sum(1 for c in cases if is_negative(key[c]))
@@ -150,7 +148,7 @@ def main(argv):
     results, queue = run_set(cases)
     summary = report(results)
 
-    filename = "results_%s_%s_%s_%s.json" % (
+    out = "results_%s_%s_%s_%s.json" % (
         config.BACKEND,
         (
             config.MODEL.split("/")[-1]
@@ -161,10 +159,6 @@ def main(argv):
         config.PROMPT_VERSION,
     )
     
-    output_directory = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), "..", "results"))
-    os.makedirs(output_directory, exist_ok=True)
-    out = os.path.join(output_directory, filename)
     with open(out, "w", encoding="utf-8") as fh:
         json.dump({"config": config.summary(),
                    "summary": summary,
