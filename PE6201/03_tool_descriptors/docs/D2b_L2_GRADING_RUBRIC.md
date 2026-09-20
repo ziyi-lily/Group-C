@@ -5,7 +5,7 @@
 - **Evaluated model:** `openai/gpt-4o-mini`
 - **Grader:** `OpenAI Codex (GPT-5)`
 - **Grader type:** Second-model judgment (not human grading)
-- **Grading date:** 14 September 2026
+- **Grading date:** 20 September 2026
 - **Conditions:** V1 and V2, 38 cases, 10 negative cases, 58 trials per condition
 
 ## Grading Instructions
