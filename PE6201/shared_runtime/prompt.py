@@ -91,7 +91,9 @@ that was never going to be made."""
 _HOW_TO_ANSWER = """
 HOW TO ANSWER
 Reply with one valid JSON object and nothing else. Do not use Markdown,
-prose outside JSON, or a code fence.
+prose outside JSON, or a code fence. The response must start with "{"
+and end with "}". Use double quotes for JSON keys and string values, and
+do not use trailing commas.
 
 There are exactly two permitted response shapes.
 
