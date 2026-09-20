@@ -171,20 +171,19 @@ model evaluation battery.
 
 The D3 implementation and evidence are contained in:
 
-- `project_files/guardrails.py` — deterministic guardrail implementation;
-- `project_files/guardrail_cases.py` — guardrail test cases;
-- `project_files/run_guardrails.py` — scripted checklist runner;
-- `results/guardrail_checklist_v1.json` — V1 guardrail checklist results;
-- `results/guardrail_checklist_v2.json` — V2 guardrail checklist results.
+- `PE6201/shared_runtime/guardrails.py` — deterministic guardrail implementation;
+- `PE6201/04_guardrails/cases/guardrail_cases.py` — guardrail test cases;
+- `PE6201/04_guardrails/scripts/run_guardrails.py` — scripted checklist runner;
+- `PE6201/04_guardrails/results/guardrail_checklist_v1.json` — V1 guardrail checklist results;
+- `PE6201/04_guardrails/results/guardrail_checklist_v2.json` — V2 guardrail checklist results.
 
-The checklist can be reproduced from the `project_files` directory with:
+From the repository root, reproduce the checklist with:
 
-    python run_guardrails.py
+    python PE6201/04_guardrails/scripts/run_guardrails.py
 
 The expected result is:
 
-    V1: 12/12 passed (100.0%)
-    V2: 12/12 passed (100.0%)
+    V1: 12/12 passed (100.0%); hostile request cases: 3
+    V2: 12/12 passed (100.0%); hostile request cases: 3
 
-No API key or live-model call is required for this deterministic guardrail
-checklist.
+No API key or live-model call is required for this deterministic guardrail checklist.
