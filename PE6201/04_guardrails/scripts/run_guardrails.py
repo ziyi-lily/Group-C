@@ -12,14 +12,6 @@ and all test cases remain identical.
 
 import json
 import os
-import sys
-
-PE6201_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-SHARED_RUNTIME = os.path.join(PE6201_ROOT, "shared_runtime")
-CASES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cases"))
-for path in (SHARED_RUNTIME, CASES_DIR):
-    if path not in sys.path:
-        sys.path.insert(0, path)
 
 import config
 import tools
@@ -210,8 +202,8 @@ def main():
             "it needs no API key and must be deterministic.")
 
     original_version = config.PROMPT_VERSION
-    output_directory = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), "..", "results"))
+    output_directory = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "results")
     os.makedirs(output_directory, exist_ok=True)
 
     summaries = []
@@ -241,3 +233,4 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
