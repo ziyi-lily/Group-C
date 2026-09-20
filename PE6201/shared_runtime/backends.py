@@ -741,22 +741,57 @@ def _parse_move(text):
     observation from the battery, not a courtesy.
     """
     cleaned = (text or "").strip()
+    if not cleaned:
+        return {"final": {"decision": "escalate",
+                          "trigger": "unparseable_model_output",
+                          "reason": "the model returned an empty response"},
+                "thought": "unparseable: empty model output"}
+
     if cleaned.startswith("```"):
         cleaned = cleaned.split("```")[1] if "```" in cleaned[3:] else cleaned[3:]
         if cleaned.lstrip().lower().startswith("json"):
             cleaned = cleaned.lstrip()[4:]
+
     try:
         move = json.loads(cleaned)
     except (json.JSONDecodeError, IndexError):
+        # Some otherwise usable models wrap a valid object in a short
+        # sentence. raw_decode extracts the first complete object while still
+        # requiring that object itself to be valid JSON.
+        move = None
+        decoder = json.JSONDecoder()
+        for start, char in enumerate(cleaned):
+            if char != "{":
+                continue
+            try:
+                move, _ = decoder.raw_decode(cleaned[start:])
+                break
+            except json.JSONDecodeError:
+                continue
+
+        if move is None:
+            return {"final": {"decision": "escalate",
+                              "trigger": "unparseable_model_output",
+                              "reason": "the model did not return parseable JSON"},
+                    "thought": "unparseable: %s" % (text or "")[:200]}
+
+    if not isinstance(move, dict):
         return {"final": {"decision": "escalate",
                           "trigger": "unparseable_model_output",
-                          "reason": "the model did not return parseable JSON"},
-                "thought": "unparseable: %s" % (text or "")[:200]}
-    # The model may answer with the tolerant list-of-lists shape.
+                          "reason": "the model JSON was not an object"},
+                "thought": "unparseable: top-level JSON must be an object"}
+
+    # The model may answer with list pairs or {tool/name, args} objects.
     if "calls" in move:
-        move["calls"] = [(c[0], c[1]) if isinstance(c, (list, tuple))
-                         else (c["tool"], c.get("args", {}))
-                         for c in move["calls"]]
+        normalised = []
+        for call in move.get("calls") or []:
+            if isinstance(call, (list, tuple)) and len(call) >= 2:
+                normalised.append((call[0], call[1]))
+            elif isinstance(call, dict):
+                name = call.get("tool") or call.get("name")
+                if name:
+                    normalised.append((name, call.get("args", {})))
+        move["calls"] = normalised
     return move
 
 
@@ -825,8 +860,20 @@ def _live_call(messages):
         raise SystemExit(
             "\n  Live API connection failed after 3 attempts: %s\n"
             % last_error)
-    return (payload["choices"][0]["message"]["content"],
-            payload.get("usage", {}))
+
+    choices = payload.get("choices") or []
+    if not choices:
+        raise SystemExit(
+            "\n  OpenRouter returned no choices. The model may be unavailable "
+            "or rate-limited.\n")
+
+    content = (choices[0].get("message") or {}).get("content")
+    if not content or not str(content).strip():
+        raise SystemExit(
+            "\n  OpenRouter returned an empty model response. Check the model "
+            "name, account balance and provider status.\n")
+
+    return (content, payload.get("usage", {}))
 
 
 # =====================================================================
