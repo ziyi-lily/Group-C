@@ -2,7 +2,7 @@
 """Run the D3(b) guardrail checklist under both D2(b) versions.
 
 Usage:
-    python run_guardrails.py
+    python PE6201/04_guardrails/scripts/run_guardrails.py
 
 The runner is scripted, deterministic, free, and writes one JSON result for
 V1 and one for V2. Tool-interface version is varied only so D2(b) can report
@@ -12,11 +12,29 @@ and all test cases remain identical.
 
 import json
 import os
+import sys
+
+# Resolve paths from this file so the checklist works from the repository root
+# (and also if invoked from another working directory).
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+GUARDRAILS_DIR = os.path.dirname(SCRIPT_DIR)
+PE6201_DIR = os.path.dirname(GUARDRAILS_DIR)
+SHARED_RUNTIME_DIR = os.path.join(PE6201_DIR, "shared_runtime")
+CASES_DIR = os.path.join(GUARDRAILS_DIR, "cases")
+REFERENCE_DATA_DIR = os.path.join(PE6201_DIR, "02_fixture_data", "reference_data")
+
+for path in (SHARED_RUNTIME_DIR, CASES_DIR):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+# The reorganised repository keeps fixtures under 02_fixture_data/reference_data.
+# Respect an explicit user setting, but provide the repository-local default.
+os.environ.setdefault("A2_DATA", REFERENCE_DATA_DIR)
 
 import config
 import tools
 from agent import run_case
-from guardrail_cases import ALL_CASES, CODE_CASES, HOSTILE_CASES
+from guardrail_cases import CODE_CASES, HOSTILE_CASES
 from guardrails import Guardrails, GuardrailStop
 
 
@@ -202,8 +220,7 @@ def main():
             "it needs no API key and must be deterministic.")
 
     original_version = config.PROMPT_VERSION
-    output_directory = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "results")
+    output_directory = os.path.join(GUARDRAILS_DIR, "results")
     os.makedirs(output_directory, exist_ok=True)
 
     summaries = []
