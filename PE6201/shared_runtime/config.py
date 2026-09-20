@@ -110,8 +110,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 _CANDIDATES = [
     os.environ.get("A2_DATA", ""),
-    os.path.join(HERE, "A2_reference_data"),
-    os.path.join(HERE, "..", "A2_reference_data"),
+    os.path.join(HERE, "..", "02_fixture_data", "reference_data"),
 ]
 
 
@@ -125,11 +124,11 @@ def data_root():
         "  I looked for a folder containing data_%s/ in:\n" % PROBLEM
         + "".join("    %s\n" % os.path.abspath(c) for c in _CANDIDATES if c)
         + "\n  Fix it either way:\n"
-        "    1. put A2_reference_data/ inside this repository, or\n"
+        "    1. keep the data in PE6201/02_fixture_data/reference_data/, or\n"
         "    2. set A2_DATA to point at it\n")
 
 
-LOG_DIR = os.path.join(HERE, "logs")
+LOG_DIR = os.path.abspath(os.path.join(HERE, "..", "01_agent_loop", "logs"))
 
 # ─────────────────────────────────────────────────────────────────────
 # PRICES, US dollars per MILLION tokens — section 7 of the brief, the

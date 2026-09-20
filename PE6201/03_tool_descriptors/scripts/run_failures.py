@@ -44,6 +44,12 @@ import statistics
 import sys
 from collections import Counter
 from datetime import datetime, timedelta, timezone
+
+PE6201_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+SHARED_RUNTIME = os.path.join(PE6201_ROOT, "shared_runtime")
+if SHARED_RUNTIME not in sys.path:
+    sys.path.insert(0, SHARED_RUNTIME)
+
 import tools
 
 import config
@@ -497,8 +503,8 @@ def failure_2():
                    "V2 restores the required evidence."),
     }
 
-    results_directory = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "results")
+    results_directory = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), "..", "results"))
     os.makedirs(results_directory, exist_ok=True)
     output_path = os.path.join(
         results_directory, "d7_failure_2_tool_interface.json")
