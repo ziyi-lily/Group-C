@@ -4,7 +4,7 @@
 ## 1. Complete Tool Descriptors
 
 
-The Problem A agent have seven tools. Each tool defines six required contract fields - **NAME + SIGNATURE, WHAT, INPUT, RETURNS, FAILS WHEN,** and **IRREVERSIBLE?** - and the number of returned tokens was measured by running the final fixture set (38 claims) through the tokenizer and serialising the results with `repr(result)`. On September 14, 2026, we locked the final controlled measurement data using a deterministic scripted planner, parallel calls, a six-turn cap, and confirmed autonomy.
+The Problem A agent have seven tools. Each tool defines six required contract fields - **NAME + SIGNATURE, WHAT, INPUT, RETURNS, FAILS WHEN,** and **IRREVERSIBLE?** - and the number of returned tokens was measured by running the final fixture set (38 claims) through the tokenizer and serialising the results with `repr(result)`. On September 20, 2026, we locked the final controlled measurement data using a deterministic scripted planner, parallel calls, a six-turn cap, and confirmed autonomy.
 
 
 ### 1.1 get_claim
@@ -233,11 +233,11 @@ The only difference between these two conditions is the get_preauthorisation des
 
 | Measure | V1 | V2 | Difference |
 |---|---|---|---|
-| Prompt characters | 11,924 | 12,539 | +615 |
-| Approximate prompt tokens (characters / 4) | 2,981 | 3,134 | +153 |
+| Prompt characters | 12,058 | 12,673 | +615 |
+| Approximate prompt tokens (characters / 4) | 3,014 | 3,168 | +154 |
 
 
-Among the median of the four observed rounds, before calculating the observed growth, the larger V2 prefix generated approximately 612 additional input tokens per run. This is a recurring cost, so the safety upside has to outweigh it.
+Among the median of the four observed rounds, before calculating the observed growth, the larger V2 prefix generated approximately 616 additional input tokens per run. This is a recurring cost, so the safety upside has to outweigh it.
 
 
 ### 4.2 Tool-return tokens
@@ -289,8 +289,8 @@ The final evaluation pool holds 38 cases - 10 of them negative. Run each ordinar
 | Median turns | 4 | 4 | No change |
 | Worst-case turns | 4 | 5 | +1 |
 | Step-cap hits | 0 | 0 | No change |
-| Estimated input tokens | 838,968 | 918,131 | +79,163 |
-| Estimated cost | US$0.0961 | US$0.1045 | +US$0.0084 |
+| Estimated input tokens | 847,350 | 927,107 | +79,757 |
+| Estimated cost | US$0.096936 | US$0.105383 | +US$0.008447 |
 
 
 Every single one of the ten scripted V1 failures occured after get_preauthorisation of claims that actually carried valid PA evidence: CLM-8842, CLM-8861, CLM-9013, CLM-9015, CLM-9016, CLM-9020, CLM-9021, CLM-9165, CLM-9180, and CLM-9103. V2 restores these to normal by restoring compatibility with the structured PA processing of the working agent.
@@ -302,7 +302,7 @@ Now, the scripted backend is deterministic - it tests the interface and the eval
 #### Live controlled comparison
 
 
-Both conditions used `openai/gpt-4o-mini`, the same 38-case fixture set, parallel tool calls, a six-turn cap, confirm autonomy, and the same trial policy. Each ordinary case ran once and each of the 10 negative cases ran three times, producing 58 trials per condition. The runs and second-model grading were completed on 14 September 2026.
+Both conditions used `openai/gpt-4o-mini`, the same 38-case fixture set, parallel tool calls, a six-turn cap, confirm autonomy, and the same trial policy. Each ordinary case ran once and each of the 10 negative cases ran three times, producing 58 trials per condition. The runs and second-model grading were completed on 20 September 2026.
 
 
 The L2 grader was `OpenAI Codex (GPT-5)`, which is different from the evaluated model. It read the complete decision record and judged every `must_record` criterion semantically; it did not use substring matching. All 58 trials in each condition were judged. An L2 trial passed only when every required criterion passed. A mixed trial passed only when both the automatic code check and the L2 judgement passed.
@@ -310,25 +310,25 @@ The L2 grader was `OpenAI Codex (GPT-5)`, which is different from the evaluated 
 
 | Measure | V1 | V2 | Difference |
 |---|---:|---:|---:|
-| Code-check pass rate | 40/58 (69.0%) | 39/58 (67.2%) | -1 trial; -1.7 percentage points |
-| L2 all-criteria pass rate | 7/58 (12.1%) | 8/58 (13.8%) | +1 trial; +1.7 percentage points |
-| Mixed pass rate | 5/58 (8.6%) | 7/58 (12.1%) | +2 trials; +3.4 percentage points |
-| Negative code-check pass rate | 21/30 (70.0%) | 21/30 (70.0%) | No change |
-| Negative mixed pass rate | 1/30 (3.3%) | 3/30 (10.0%) | +2 trials; +6.7 percentage points |
-| Individual `must_record` criteria passed | 63/159 (39.6%) | 65/159 (40.9%) | +2 criteria; +1.3 percentage points |
+| Code-check pass rate | 39/58 (67.2%) | 40/58 (69.0%) | +1 trial; +1.7 percentage points |
+| L2 all-criteria pass rate | 7/58 (12.1%) | 13/58 (22.4%) | +6 trials; +10.3 percentage points |
+| Mixed pass rate | 7/58 (12.1%) | 13/58 (22.4%) | +6 trials; +10.3 percentage points |
+| Negative code-check pass rate | 22/30 (73.3%) | 21/30 (70.0%) | -1 trial; -3.3 percentage points |
+| Negative mixed pass rate | 3/30 (10.0%) | 9/30 (30.0%) | +6 trials; +20.0 percentage points |
+| Individual `must_record` criteria passed | 58/159 (36.5%) | 73/159 (45.9%) | +15 criteria; +9.4 percentage points |
 | Median turns | 3 | 3 | No change |
 | Worst-case turns | 5 | 5 | No change |
 | Step-cap hits | 0 | 0 | No change |
-| Input tokens | 793,603 | 800,149 | +6,546 |
-| Output tokens | 18,485 | 17,524 | -961 |
-| Total tokens | 812,088 | 817,673 | +5,585 |
-| Cost | US$0.086755 | US$0.087025 | +US$0.000270 |
+| Input tokens | 754,126 | 828,172 | +74,046 |
+| Output tokens | 17,502 | 17,704 | +202 |
+| Total tokens | 771,628 | 845,876 | +74,248 |
+| Cost | US$0.082417 | US$0.089897 | +US$0.007480 |
 
 
-V2 did not improve the broad live code-check pass rate in this run: it passed one fewer trial than V1, while negative code-check performance was unchanged. A one-trial difference is not sufficient evidence that V2 generally reduces model accuracy, so we make no claim of a broad accuracy gain or loss.
+V2 passed one more broad live code-check trial than V1, while it passed one fewer negative code-check trial. These one-trial differences are not sufficient evidence of a broad accuracy gain or loss.
 
 
-The semantic results show a narrower benefit. V2 raised the mixed pass rate from 5/58 to 7/58 and the negative mixed pass rate from 1/30 to 3/30. However, the low absolute L2 rates in both versions show that the agent often reached a broad outcome without recording all required identifiers, dates, amounts, limits, exclusions, or line-level evidence. The structured interface makes expired-PA evidence available, but does not guarantee that a stochastic model will cite it in every run.
+The semantic results show a narrower benefit. V2 raised the mixed pass rate from 7/58 to 13/58 and the negative mixed pass rate from 3/30 to 9/30. However, the low absolute L2 rates in both versions show that the agent often reached a broad outcome without recording all required identifiers, dates, amounts, limits, exclusions, or line-level evidence. The structured interface makes expired-PA evidence available, but does not guarantee that a stochastic model will cite it in every run.
 
 
 #### Guardrail checklist
@@ -355,9 +355,9 @@ CLM-8894 carries procedure 29881, which needs pre-authorisation. PA-5640 is tied
 | Code check | PASS | PASS | No change |
 | Required evidence criteria passed | 0/3 - FAIL | 3/3 - PASS | Failure recovered |
 | Turns | 4 | 4 | No change |
-| Estimated input tokens | 17,329 | 17,374 | +45 |
+| Estimated input tokens | 17,499 | 17,544 | +45 |
 | Estimated output tokens | 600 | 600 | No change |
-| Estimated cost | US$0.001973 | US$0.001977 | approximately +US$0.000004 |
+| Estimated cost | US$0.001990 | US$0.001994 | approximately +US$0.000004 |
 
 
 The 0/3 and 3/3 figures refer to three evidence criteria in one deterministic run, not three separate trials.
@@ -386,9 +386,9 @@ V2 is bigger. It tacks on 18.85 mean return tokens per PA call, 264 total across
 The deterministic regression increased from 82.8% to 100.0%, indicating that the structured V2 result is compatible with the working agent and prevents valid PA records from being misread as lost by the scripted planner. Both versions passed all 12 guardrail cases, so the rewrite  did not introduce measurable guardrail regression.
 
 
-The live comparison did not show a broad code-check improvement: V1 passed 40/58 trials and V2 passed 39/58. The second model judgment identified a minor semantic improvement, with the hybrid pass rate moving from 5/58 to 7/58, but the absolute L2 rate remained low because many records omitted the required evidence. The reports of these data do not take the code check differences from a single trial as general model quality results.
+The live comparison showed a one-trial broad code-check difference: V1 passed 39/58 trials and V2 passed 40/58. The second model judgment identified a semantic improvement, with the hybrid pass rate moving from 7/58 to 13/58, but the absolute L2 rate remained low because many records omitted the required evidence. The reports of these data do not take the code check differences from a single trial as general model quality results.
 
 
-The failure of the target provides the clearest reason for the change.  V1 removed the existence and date of the expired PA-5640 from the tool return. In the deterministic reproduction, V2 changed the required-evidence result from 0/3 to 3/3 without altering the decision or the number of rounds. In the live battery, V1 did not record the three required PA facts in all three CLM-8894 tests. V2 recorded all three facts in one of the three experiments. Therefore, V2 is regarded as an interface constraint for preserving evidence rather than a comprehensive accuracy or token-preserving fix.
+The failure of the target provides the clearest reason for the change.  V1 removed the existence and date of the expired PA-5640 from the tool return. In the deterministic reproduction, V2 changed the required-evidence result from 0/3 to 3/3 without altering the decision or the number of rounds. In the live battery, V1 did not record the three required PA facts in all three CLM-8894 tests. V2 recorded all three facts in all three experiments. Therefore, V2 is regarded as an interface constraint for preserving evidence rather than a comprehensive accuracy or token-preserving fix.
 
 The L2 judgement used a different model from the evaluated agent and covered all 58 trials per condition. The complete verdicts are stored in `results_live_gpt-4o-mini_parallel_v1_graded.json` and `results_live_gpt-4o-mini_parallel_v2_graded.json`; the grading instructions are stored in `D2b_L2_GRADING_RUBRIC.md` so the reported mixed rates can be audited.
