@@ -21,6 +21,11 @@ import json
 import os
 import sys
 
+PE6201_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+SHARED_RUNTIME = os.path.join(PE6201_ROOT, "shared_runtime")
+if SHARED_RUNTIME not in sys.path:
+    sys.path.insert(0, SHARED_RUNTIME)
+
 import config
 from harness import (load_cases, load_key, report, run_set, is_negative)
 
@@ -145,7 +150,7 @@ def main(argv):
     results, queue = run_set(cases)
     summary = report(results)
 
-    out = "results_%s_%s_%s_%s.json" % (
+    filename = "results_%s_%s_%s_%s.json" % (
         config.BACKEND,
         (
             config.MODEL.split("/")[-1]
@@ -156,6 +161,10 @@ def main(argv):
         config.PROMPT_VERSION,
     )
     
+    output_directory = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), "..", "results"))
+    os.makedirs(output_directory, exist_ok=True)
+    out = os.path.join(output_directory, filename)
     with open(out, "w", encoding="utf-8") as fh:
         json.dump({"config": config.summary(),
                    "summary": summary,

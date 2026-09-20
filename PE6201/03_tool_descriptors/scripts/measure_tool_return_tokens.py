@@ -1,9 +1,15 @@
 import json
 import statistics
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import tiktoken
+
+PE6201_ROOT = Path(__file__).resolve().parents[2]
+SHARED_RUNTIME = PE6201_ROOT / "shared_runtime"
+if str(SHARED_RUNTIME) not in sys.path:
+    sys.path.insert(0, str(SHARED_RUNTIME))
 
 import config
 import tools
@@ -296,7 +302,7 @@ def main():
             f"{clm_8894['v2_tokens']} tokens"
         )
 
-    results_directory = Path("results")
+    results_directory = Path(__file__).resolve().parent.parent / "results"
     results_directory.mkdir(exist_ok=True)
 
     output = {
