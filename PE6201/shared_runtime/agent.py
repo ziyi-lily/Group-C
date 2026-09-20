@@ -117,6 +117,19 @@ def run_case(case_id, approve=None, verbose=False, disable_guards=(),
 
             move = backend.next_move(transcript)
 
+            # A backend must return one JSON-like move. Keep the loop
+            # gradeable if a model adapter returns an unexpected value rather
+            # than crashing later on move.get(...).
+            if not isinstance(move, dict):
+                move = {
+                    "thought": "invalid backend response format",
+                    "final": {
+                        "decision": "escalate",
+                        "trigger": "unparseable_model_output",
+                        "reason": "the backend did not return a JSON object",
+                    },
+                }
+
             ti, to = backend.token_estimate(transcript)
             tokens_in, tokens_out = tokens_in + ti, tokens_out + to
             guards.check_budget(tokens_in + tokens_out, turns)
@@ -163,7 +176,28 @@ def run_case(case_id, approve=None, verbose=False, disable_guards=(),
             turns += 1
             guards.check_turns(turns)
 
-            calls = [(n, a) for n, a in move.get("calls", [])]
+            # Accept the documented list-of-pairs representation as well as
+            # the common {tool/name, args} representation returned by some
+            # live models. The backend normally normalises this already; this
+            # is a final interface boundary, not a second planning path.
+            raw_calls = move.get("calls") or []
+            if not raw_calls and move.get("tool"):
+                raw_calls = [[move["tool"], move.get("args", {})]]
+
+            calls = []
+            for item in raw_calls:
+                if isinstance(item, (tuple, list)) and len(item) >= 2:
+                    name, args = item[0], item[1]
+                elif isinstance(item, dict):
+                    name = item.get("tool") or item.get("name")
+                    args = item.get("args", {})
+                elif isinstance(item, str):
+                    name, args = item, {}
+                else:
+                    continue
+
+                if name:
+                    calls.append((name, args if isinstance(args, dict) else {}))
             observations = []
 
             for name, args in calls:
